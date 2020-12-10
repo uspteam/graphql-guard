@@ -14,7 +14,7 @@ module GraphQL
     end
 
     MASKING_FILTER = ->(schema_member, ctx) do
-      mask = schema_member.graphql_definition.metadata[:mask]
+      mask = schema_member.mask
       mask ? mask.call(ctx) : true
     end
 
@@ -70,7 +70,7 @@ module GraphQL
       if guard_proc.call(trace_data[:object], args(trace_data), trace_data[:query].context)
         yield
       else
-        not_authorized.call(field.owner.graphql_definition, field.name.to_sym)
+        not_authorized.call(field.owner, field.name.to_sym)
       end
     end
 
@@ -87,7 +87,7 @@ module GraphQL
     end
 
     def inline_guard(type_or_field)
-      type_or_field.graphql_definition.metadata[:guard]
+      type_or_field.guard
     end
   end
 end
