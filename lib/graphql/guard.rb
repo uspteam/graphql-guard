@@ -14,8 +14,11 @@ module GraphQL
     end
 
     MASKING_FILTER = ->(schema_member, ctx) do
-      mask = schema_member.mask
-      mask ? mask.call(ctx) : true
+      if schema_member.respond_to?(:mask) && schema_member.mask
+        return schema_member.mask.first.call(ctx) 
+      end
+
+      true
     end
 
     attr_reader :policy_object, :not_authorized
@@ -64,6 +67,7 @@ module GraphQL
 
     def ensure_guarded(trace_data)
       field = trace_data[:field]
+      
       guard_proc = find_guard_proc(field.owner, field)
       return yield unless guard_proc
 
@@ -87,14 +91,13 @@ module GraphQL
     end
 
     def inline_guard(type_or_field)
-      type_or_field.guard
+      if type_or_field.respond_to?(:guard) && type_or_field.guard
+        type_or_field.guard.first
+      end
     end
   end
 end
 
-GraphQL::ObjectType.accepts_definitions(guard: GraphQL::Define.assign_metadata_key(:guard))
-GraphQL::Field.accepts_definitions(guard: GraphQL::Define.assign_metadata_key(:guard))
-GraphQL::Field.accepts_definitions(mask: GraphQL::Define.assign_metadata_key(:mask))
 GraphQL::Schema::Object.accepts_definition(:guard)
 GraphQL::Schema::Field.accepts_definition(:guard)
 GraphQL::Schema::Field.accepts_definition(:mask)

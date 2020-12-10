@@ -24,7 +24,7 @@ RSpec.describe GraphQL::Guard do
 
       expect {
         Inline::Schema.execute(query, variables: {userId: 2}, context: {current_user: user})
-      }.to raise_error(GraphQL::Guard::NotAuthorizedError, 'Not authorized to access: Query.posts')
+      }.to raise_error(GraphQL::Guard::NotAuthorizedError, 'Not authorized to access: Inline::QueryType.posts')
     end
 
     it 'does not authorize a field with a policy on the type' do
@@ -33,7 +33,7 @@ RSpec.describe GraphQL::Guard do
 
       expect {
         Inline::Schema.execute(query, variables: {userId: 1}, context: {current_user: user})
-      }.to raise_error(GraphQL::Guard::NotAuthorizedError, 'Not authorized to access: Post.id')
+      }.to raise_error(GraphQL::Guard::NotAuthorizedError, 'Not authorized to access: Inline::PostType.id')
     end
 
     it 'does not authorize a field and returns an error' do
@@ -43,7 +43,7 @@ RSpec.describe GraphQL::Guard do
       result = Inline::SchemaWithoutExceptions.execute(query, variables: {userId: 1}, context: {current_user: user})
 
       expect(result['errors']).to eq([{
-        "message" => "Not authorized to access Post.id",
+        "message" => "Not authorized to access Inline::PostType.id",
         "locations" => [{"line" => 1, "column" => 48}],
         "path" => ["posts", 0, "id"]}
       ])
@@ -65,7 +65,7 @@ RSpec.describe GraphQL::Guard do
 
       expect {
         Inline::Schema.execute(query, variables: {userId: 2}, context: {current_user: user})
-      }.to raise_error(GraphQL::Guard::NotAuthorizedError, 'Not authorized to access: Mutation.createPost')
+      }.to raise_error(GraphQL::Guard::NotAuthorizedError, 'Not authorized to access: Inline::MutationType.createPost')
     end
   end
 
@@ -110,7 +110,7 @@ RSpec.describe GraphQL::Guard do
 
       expect {
         PolicyObject::Schema.execute(query, variables: {userId: 2}, context: {current_user: user})
-      }.to raise_error(GraphQL::Guard::NotAuthorizedError, 'Not authorized to access: Query.posts')
+      }.to raise_error(GraphQL::Guard::NotAuthorizedError, 'Not authorized to access: PolicyObject::QueryType.posts')
     end
 
     it 'does not authorize a field with a policy on the type' do
@@ -119,7 +119,7 @@ RSpec.describe GraphQL::Guard do
 
       expect {
         PolicyObject::Schema.execute(query, variables: {userId: 1}, context: {current_user: user})
-      }.to raise_error(GraphQL::Guard::NotAuthorizedError, 'Not authorized to access: Post.id')
+      }.to raise_error(GraphQL::Guard::NotAuthorizedError, 'Not authorized to access: PolicyObject::PostType.id')
     end
 
     it 'authorizes to execute a mutation' do
@@ -137,7 +137,7 @@ RSpec.describe GraphQL::Guard do
 
       expect {
         PolicyObject::Schema.execute(query, variables: {userId: 2}, context: {current_user: user})
-      }.to raise_error(GraphQL::Guard::NotAuthorizedError, 'Not authorized to access: Mutation.createPost')
+      }.to raise_error(GraphQL::Guard::NotAuthorizedError, 'Not authorized to access: PolicyObject::MutationType.createPost')
     end
   end
 
