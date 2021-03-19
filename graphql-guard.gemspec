@@ -4,14 +4,14 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "graphql/guard/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "graphql-guard"
+  spec.name          = "usp-graphql-guard"
   spec.version       = GraphQL::Guard::VERSION
   spec.authors       = ["exAspArk"]
   spec.email         = ["exaspark@gmail.com"]
 
   spec.summary       = %q{Simple authorization gem for graphql-ruby}
   spec.description   = %q{Simple authorization gem for graphql-ruby}
-  spec.homepage      = "https://github.com/exAspArk/graphql-guard"
+  spec.homepage      = "https://github.com/uspteam/graphql-guard"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
