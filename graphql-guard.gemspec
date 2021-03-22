@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "graphql/guard/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "usp-graphql-guard"
+  spec.name          = "graphql-guard"
   spec.version       = GraphQL::Guard::VERSION
   spec.authors       = ["exAspArk"]
   spec.email         = ["exaspark@gmail.com"]
