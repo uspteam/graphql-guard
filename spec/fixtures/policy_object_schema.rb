@@ -36,13 +36,13 @@ module PolicyObject
   class GraphqlPolicy
     RULES = {
       QueryType => {
-        posts: ->(_obj, args, ctx) { args[:user_id] == ctx[:current_user].id }
+        posts: ->(data) { data.args[:user_id] == data.ctx[:current_user].id }
       },
       PostType => {
-        '*': ->(_post, args, ctx) { ctx[:current_user].admin? }
+        '*': ->(data) { data.ctx[:current_user].admin? }
       },
       MutationType => {
-        createPost: ->(_obj, args, ctx) { args[:user_id] == ctx[:current_user].id }
+        createPost: ->(data) { data.args[:user_id] == data.ctx[:current_user].id }
       }
     }
 
