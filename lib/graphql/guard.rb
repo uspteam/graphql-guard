@@ -2,6 +2,7 @@
 
 require "graphql"
 require "graphql/guard/version"
+require "graphql/guard/trace_meta_data"
 
 module GraphQL
   class Guard
@@ -9,8 +10,8 @@ module GraphQL
 
     ANY_FIELD_NAME = :'*'
 
-    DEFAULT_NOT_AUTHORIZED = ->(type, field) do
-      raise NotAuthorizedError.new("Not authorized to access: #{type}.#{field}")
+    DEFAULT_NOT_AUTHORIZED = ->(data) do
+      raise NotAuthorizedError.new("Not authorized to access: #{data.path}")
     end
 
     MASKING_FILTER = ->(schema_member, ctx) do
@@ -66,24 +67,16 @@ module GraphQL
     end
 
     def ensure_guarded(trace_data)
-      field = trace_data[:field]
-      
-      guard_proc = find_guard_proc(field.owner, field)
+      guard_proc = find_guard_proc(trace_data[:field].owner, trace_data[:field])
       return yield unless guard_proc
 
-      if guard_proc.call(trace_data[:object], args(trace_data), trace_data[:query].context)
+      trace_meta = GraphQL::Guard::TraceMetaData.new(trace_data)
+
+      if guard_proc.call(trace_meta)
         yield
       else
-        not_authorized.call(field.owner, field.name.to_sym)
+        not_authorized.call(trace_meta)
       end
-    end
-
-    def args(trace_data)
-      if trace_data[:arguments].key?(:input) && !trace_data[:arguments][:input].is_a?(Hash)
-        return trace_data[:arguments][:input] # Relay mutation input
-      end
-
-      trace_data[:arguments]
     end
 
     def policy_object_guard(type, field_name)
